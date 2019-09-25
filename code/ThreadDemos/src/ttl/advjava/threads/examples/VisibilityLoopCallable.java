@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class VisibilityLoopCallable {
 
 	private int var;
-	private boolean ready;
+	private volatile boolean ready;
 	private AtomicInteger counter = new AtomicInteger(0);
 
 	ExecutorService es = Executors.newFixedThreadPool(4, (r) -> {
@@ -93,6 +93,10 @@ public class VisibilityLoopCallable {
 		public Void call() {
 			var = 10;
 			ready = true;
+
+			//After a write to a volatile variable
+			//A subsequent read of the variable will get not only it's latest value
+			//but also the value of everything written above that write.
 
 			return null;
 		}
