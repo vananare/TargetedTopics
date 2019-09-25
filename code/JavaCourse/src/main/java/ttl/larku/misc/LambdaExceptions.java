@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +19,8 @@ public class LambdaExceptions {
     public static void main(String[] args) {
         List<String> files = Arrays.asList("/tmp/testFile");
 
-       List<String> result = new LambdaExceptions().withLambdasWithWithWrapper(files);
-       result.forEach(System.out::println);
+        List<String> result = new LambdaExceptions().withLambdasWithWithWrapper(files);
+        result.forEach(System.out::println);
     }
 
     public List<String> withoutLambdas(List<String> fileNames) throws IOException {
@@ -46,16 +47,32 @@ public class LambdaExceptions {
     }
      */
 
-
-    public List<String> withLambdasWithWithWrapper(List<String> fileNames) {
+    public List<String> withTryAndCatch(List<String> fileNames) {
         List<String> result = fileNames.stream()
-                .map(funcWrapper(fileName -> {
-                        //URL url = new URL("xyz.com");
+                .map(fileName -> {
+                    //URL url = new URL("xyz.com");
+                    try {
                         DriverManager.getConnection("xyz");
                         FileInputStream fis = new FileInputStream(fileName);
                         int c = fis.read();
                         return fileName + " had " + c;
-                    })
+                    } catch (IOException | SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    public List<String> withLambdasWithWithWrapper(List<String> fileNames) {
+        List<String> result = fileNames.stream()
+                .map(funcWrapper(fileName -> {
+                            //URL url = new URL("xyz.com");
+                            DriverManager.getConnection("xyz");
+                            FileInputStream fis = new FileInputStream(fileName);
+                            int c = fis.read();
+                            return fileName + " had " + c;
+                        })
                 )
                 .collect(Collectors.toList());
         return result;
@@ -63,11 +80,12 @@ public class LambdaExceptions {
 
     /**
      * We create an Function interface that throws Exceptions
+     *
      * @param <T>
      * @param <R>
      */
-    public interface FunctionThatThrows<T, R, E extends Exception > {
-        public R apply(T t) throws E ;
+    public interface FunctionThatThrows<T, R, E extends Exception> {
+        public R apply(T t) throws E;
     }
 
     /**
@@ -75,7 +93,7 @@ public class LambdaExceptions {
      * inside a try block.  We catch all Exceptions and throw as
      * RuntimeExceptions.  Could make this fancier and catch certain
      * exceptions and deal with them here.
-     *
+     * <p>
      * Not that we return a Function object from here.  That is what
      * allows us to call this method in a Lambda.
      *
@@ -86,18 +104,16 @@ public class LambdaExceptions {
      * @return
      */
     public <T, R, E extends Exception> Function<T, R>
-                            funcWrapper(FunctionThatThrows<T, R, E> thrower) {
+    funcWrapper(FunctionThatThrows<T, R, E> thrower) {
         return (input) -> {
             try {
                 return thrower.apply(input);
             } catch (Exception e) {
-                if(e instanceof MalformedURLException) {
+                if (e instanceof MalformedURLException) {
                     System.out.println("Handling MalFormedURL: " + e);
-                }
-                else if(e instanceof IOException) {
+                } else if (e instanceof IOException) {
                     System.out.println("Handling IOException: " + e);
-                }
-                else {
+                } else {
                     throw new RuntimeException(e);
                 }
                 //bizarre, but necessary to satisfy compiler

@@ -1,8 +1,9 @@
 package ttl.larku.domain;
 
-public class Student {
-	
-	public enum Status { 
+public class Student implements Comparable<Student>{
+
+
+	public enum Status {
 		FULL_TIME,
 		PART_TIME,
 		HIBERNATING
@@ -95,4 +96,16 @@ public class Student {
 		return true;
 	}
 
+	@Override
+	public int compareTo(Student other) {
+//		if(this.id < other.id) {
+//			return -1;
+//		}
+//		else if(this.id > other.id) {
+//			return 1;
+//		}
+//		return 0;
+
+		return this.id < other.id ? -1 : this.id > other.id ? 1 : 0;
+	}
 }
