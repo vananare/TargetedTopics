@@ -46,10 +46,11 @@ public class GenericFunAndGames {
         //Using method refrences
         MyThing<Number> nt4 = numberThing.map(this::funo, 20);
         MyThing<Number> nt5 = numberThing.map(this::fun2, 20);
+
         //This next one will not compile.  Our T is Number and
         //we are trying to call a function which takes an Integer,
         // i.e. a ? extends Number.  Which is a no no no no no no.
-        //MyThing<Number> ntBad = numberThing.map(this::fun3, 20);
+        //MyThing<Number> ntBad = numberThing.map(this::fun3, 20); //<-- will not compile
 
         MyThing<String> s = numberThing.map(this::fun4, 10);
         MyThing<String> s2 = numberThing.map((n) -> "" + n.intValue(), 10);
