@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface MyLength {
 
-	int min() ;
+	int min();
 	int max() default Integer.MAX_VALUE;
 }

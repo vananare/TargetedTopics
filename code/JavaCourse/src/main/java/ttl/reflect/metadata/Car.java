@@ -1,14 +1,16 @@
 package ttl.reflect.metadata;
 
+
 public class Car
 {
 	@MyNotNull
-    @MyLength(min = 5)
+    @MyLength(min = 5, max = 16)
     private String modelName;
 
 	@MyStockNumber
 	private String stockNumber;
 
+    @MyLength(min = 1, max = 16)
     private int numWheels;
     
     private int numDoors;

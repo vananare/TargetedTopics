@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public class RuntimeInvocationExample {
 
 	public static void main(String[] args) {
-		String className = "ttl.OtherClass";
+		String className = "ttl.reflect.basic.OtherClass";
 		try {
 			// get the class
 			Class<?> clazz = getClass(className);
@@ -23,15 +23,14 @@ public class RuntimeInvocationExample {
 			//OtherClass oc = new OtherClass();
 
 			//Object clazzInstance = clazz.newInstance();
+			Constructor<?> ctor = clazz.getDeclaredConstructor(int.class);
 			//Object clazzInstance = clazz.getDeclaredConstructor().newInstance();
-            Constructor<?> ctor   = clazz.getDeclaredConstructor(int.class);
             Constructor [] ctors = clazz.getDeclaredConstructors();
 
             Object clazzInstance = ctor.newInstance(134);
 
 
 			//Object clazzInstance = ctor.newInstance(45);
-			//Object clazzInstance = clazz.newInstance();
 
 			// Find the doStuff Method
 			Method method = clazz.getMethod("doStuff", String.class);
